@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import csv
 
 
 def get_html(url):
@@ -8,6 +9,12 @@ def get_html(url):
         return r.text
     else:
         print('oooops')
+
+def write_csv(data):
+    with open('kadastrru.csv', 'a') as file:
+        order = ('name', 'date', 'link')
+        writer = csv.DictWriter(file, fieldnames=order)
+        writer.writerow(data)
 
 
 def get_page_data(html):
@@ -19,6 +26,14 @@ def get_page_data(html):
         date = post.find(class_='blogPostDate').text.strip()
         link = 'https://kadastrru.info' + post.find(class_='blogPreviewTitle').get('href') 
         print(name, date, link)
+
+        data = {
+            'name': name,
+            'date': date,
+            'link': link
+        }
+
+        write_csv(data)
 
 def main():
     url = 'https://kadastrru.info/ru/blog/'
